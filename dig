@@ -1,0 +1,68 @@
+-- Function to check if the block is an ore or diamond
+function isValuable()
+    local success, data = turtle.inspect()
+    if success then
+        local blockName = data.name
+        local valuableBlocks = {
+            ["minecraft:iron_ore"] = true,
+            ["minecraft:gold_ore"] = true,
+            ["minecraft:diamond_ore"] = true,
+            ["minecraft:coal_ore"] = true,
+            ["minecraft:lapis_ore"] = true,
+            ["minecraft:emerald_ore"] = true,
+            ["minecraft:redstone_ore"] = true,
+            ["minecraft:nether_quartz_ore"] = true,
+            ["minecraft:copper_ore"] = true
+        }
+        return valuableBlocks[blockName] == true
+    end
+    return false
+end
+
+-- Function to dig if the block is valuable
+function digIfValuable()
+    if isValuable() then
+        turtle.dig()
+    end
+end
+
+-- Get user input for dimensions
+print("Enter tunnel height:")
+local height = tonumber(read())
+print("Enter tunnel width:")
+local width = tonumber(read())
+print("Enter tunnel depth:")
+local depth = tonumber(read())
+
+-- Mining the tunnel based on user input
+for d = 1, depth do
+    for h = 1, height do
+        for w = 1, width do
+            digIfValuable()
+            if w < width then
+                turtle.forward()
+            end
+        end
+        if h < height then
+            if (h % 2 == 1) then
+                turtle.turnRight()
+                digIfValuable()
+                turtle.forward()
+                turtle.turnRight()
+            else
+                turtle.turnLeft()
+                digIfValuable()
+                turtle.forward()
+                turtle.turnLeft()
+            end
+        end
+    end
+    if d < depth then
+        turtle.digDown()
+        turtle.down()
+        if (height % 2 == 0) then
+            turtle.turnRight()
+            turtle.turnRight()
+        end
+    end
+end
